@@ -4,10 +4,15 @@
 #include <math.h> // pow()
 #include <assert.h>
 
+enum color {YELLOW, BLUE, GREEN, RED, PINK, ORANGE};
+typedef enum color color;
+
 // ==== BitSet ==========================================================
 
-// define here the BitSet type
-
+typedef struct {
+  size_t size;
+  char* bytes;
+} BitSet;
 
 /** --------------------------------------------------
  * @brief creates a BitSet structure of a given size, specified as the number of wanted bits.
@@ -55,8 +60,10 @@ void bitset_set(BitSet* bitset, size_t index, int bit)
 
 // ==== Combination =====================================================
 
-// define here the Combination type and all the required functions
-
+typedef struct {
+  size_t size;
+  color* elements;
+} Combination;
 
 // --------------------------------------------------
 Combination create_combination(size_t size)
@@ -72,7 +79,6 @@ size_t combination_to_index(const Combination combination)
 Combination* combination_from_index(size_t index, Combination* combination)
 {
 }
-
 
 // --------------------------------------------------
 void print_combination(const Combination combination)
@@ -106,17 +112,20 @@ void print_combination(const Combination combination)
     putchar('\n');
 }
 
-
 // ==== Answer ==========================================================
 
-// define here the Answer type and all the required functions
-
-
+typedef struct {
+  unsigned int positions;
+  unsigned int colors;
+} Answer;
 
 // ==== Solvers =========================================================
 
-// define here the Solver_support type and all the required functions
-
+typedef struct {
+  Combination combiOne;
+  Combination combiTwo;
+  BitSet bits;
+} Solver_support;
 
 // --------------------------------------------------
 void solve_brute_force(size_t size)
@@ -178,7 +187,6 @@ void solve_with_bitset(size_t size)
 void solve_knuth(size_t size)
 {
 }
-
 
 // ==== main() ==========================================================
 
