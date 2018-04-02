@@ -6,6 +6,7 @@
 
 enum color {YELLOW, BLUE, GREEN, RED, PINK, ORANGE};
 typedef enum color color;
+const unsigned short int colorEnumSize = 6;
 
 // ==== BitSet ==========================================================
 
