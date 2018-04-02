@@ -68,6 +68,20 @@ typedef struct {
 // --------------------------------------------------
 Combination create_combination(size_t size)
 {
+  Combination newCombi;
+
+  newCombi.size = size;
+  newCombi.elements = calloc(size, sizeof(color));
+
+  if (newCombi.elements != NULL) {
+    for(size_t i=0; i < size; ++i) {
+      newCombi.elements[i] = YELLOW;
+    }
+
+    return newCombi
+  }
+
+  return NULL;
 }
 
 // --------------------------------------------------
