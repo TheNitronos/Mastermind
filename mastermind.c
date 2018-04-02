@@ -74,15 +74,16 @@ Combination create_combination(size_t size)
   newCombi.size = size;
   newCombi.elements = calloc(size, sizeof(color));
 
-  if (newCombi.elements != NULL) {
-    for(size_t i=0; i < size; ++i) {
-      newCombi.elements[i] = YELLOW;
-    }
-
-    return newCombi
+  for(size_t i=0; i < size; ++i) {
+    newCombi.elements[i] = YELLOW;
   }
 
-  return NULL;
+  return newCombi
+}
+
+// --------------------------------------------------
+int next_combination(Combination* const combination)
+{
 }
 
 // --------------------------------------------------
