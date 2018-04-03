@@ -161,6 +161,40 @@ void solve_brute_force(size_t size)
 }
 
 // --------------------------------------------------
+int ask(const Combination combination, Answer* const answer)
+{
+  int rPositions = -1;
+  int rColors = -1;
+  int rLength = -1;
+
+  print_combination(combination);
+
+  printf("Please score attempt (positions, colors): ");
+  fflush(stdout);
+
+  rLength = scanf("%d %d", &rPositions, &rColors);
+  answer.positions = rPositions;
+  answer.colors = rColors;
+
+  if ((rLength != 2) || (rPositions < 0) || (rColors < 0)) {
+    printf("Unable to parse answer. Aborting.\n");
+    fflush(stdout);
+
+    return 1;
+  }
+
+  if ((rPositions == combination.size) && (rColors == 0)) {
+    printf("Found solution: ");
+    print_combination(combination);
+    fflush(stdout);
+
+    return 1;
+  }
+
+  return 0;
+}
+
+// --------------------------------------------------
 int score_attempt(const Combination* attempt, const Combination* result, Answer* ans)
 {
     if (ans     == NULL) return 0;
