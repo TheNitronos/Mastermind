@@ -286,7 +286,7 @@ int main(void)
     do {
         printf("What size (2, 3, 4, 5)? ");
         fflush(stdout);
-        scanf("%I", &size);
+        scanf("%Iu", &size);
     } while ((size != 2) && (size != 3) && (size != 4) && (size != 5));
 
     char strategy = '\0';
