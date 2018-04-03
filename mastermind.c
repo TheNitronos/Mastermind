@@ -6,7 +6,7 @@
 
 enum color {YELLOW, BLUE, GREEN, RED, PINK, ORANGE};
 typedef enum color color;
-const unsigned short int colorEnumSize = 6;
+const unsigned int colorEnumSize = 6;
 
 // ==== BitSet ==========================================================
 
@@ -84,7 +84,7 @@ Combination create_combination(size_t size)
 // --------------------------------------------------
 int next_combination(Combination* const combination)
 {
-  unsigned short int overflow = 1;
+  unsigned int overflow = 1;
   for (size_t i=0; i < combination->size; ++i) {
     combination->elements[i] = (combination->elements[i]+overflow)%colorEnumSize;
 
