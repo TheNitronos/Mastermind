@@ -4,12 +4,12 @@
 #include <math.h> // pow()
 #include <assert.h>
 
+// ==== Color ===========================================================
 enum color {YELLOW, BLUE, GREEN, RED, PINK, ORANGE};
 typedef enum color color;
 const unsigned int colorEnumSize = 6;
 
 // ==== BitSet ==========================================================
-
 typedef struct {
   size_t size;
   char* bytes;
