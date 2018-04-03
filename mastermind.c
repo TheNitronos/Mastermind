@@ -78,12 +78,24 @@ Combination create_combination(size_t size)
     newCombi.elements[i] = YELLOW;
   }
 
-  return newCombi
+  return newCombi;
 }
 
 // --------------------------------------------------
 int next_combination(Combination* const combination)
 {
+  unsigned short int overflow = 1;
+  for (size_t i=0; i < combination->size; ++i) {
+    combination->elements[i] = (combination->elements[i]+overflow)%colorEnumSize;
+
+    if (overflow && (combination->elements[i] == YELLOW)) {
+      overflow = 1;
+    } else {
+      overflow = 0;
+    }
+  }
+
+  return overflow;
 }
 
 // --------------------------------------------------
