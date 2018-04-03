@@ -101,11 +101,35 @@ int next_combination(Combination* const combination)
 // --------------------------------------------------
 size_t combination_to_index(const Combination combination)
 {
+  size_t index = 0;
+
+  for (size_t i = 0; i < combination.size; ++i) {
+    index += combination.elements[i]*pow(6, i);
+  }
+
+  return index;
 }
 
 // --------------------------------------------------
 Combination* combination_from_index(size_t index, Combination* combination)
 {
+  *combination = create_combination(combination->size);
+  int j;
+
+  for (int i = (combination->size - 1); i >= 0; --i) {
+    j = 5;
+
+    while ((j >= 0) && (index >= pow(6, i))) {
+      if ((index - j*pow(6, i)) >= 0) {
+        combination->elements[i] = j;
+        index -= j*pow(6, i);
+      }
+
+      --j;
+    }
+  }
+
+  return combination;
 }
 
 // --------------------------------------------------
