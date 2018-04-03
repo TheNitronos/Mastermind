@@ -156,11 +156,6 @@ typedef struct {
 } Solver_support;
 
 // --------------------------------------------------
-void solve_brute_force(size_t size)
-{
-}
-
-// --------------------------------------------------
 int ask(const Combination combination, Answer* const answer)
 {
   int rPositions = -1;
@@ -231,6 +226,15 @@ int score_attempt(const Combination* attempt, const Combination* result, Answer*
 
     free(used);
     return 1;
+}
+
+// --------------------------------------------------
+void solve_brute_force(size_t size)
+{
+  Combination combination = create_combination(size);
+  Answer answer;
+
+  while ((!ask(combination, &answer)) && (!next_combination(&combination)));
 }
 
 // --------------------------------------------------
