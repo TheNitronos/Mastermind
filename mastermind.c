@@ -173,8 +173,8 @@ int ask(const Combination combination, Answer* const answer)
   fflush(stdout);
 
   rLength = scanf("%d %d", &rPositions, &rColors);
-  answer.positions = rPositions;
-  answer.colors = rColors;
+  answer->positions = rPositions;
+  answer->colors = rColors;
 
   if ((rLength != 2) || (rPositions < 0) || (rColors < 0)) {
     printf("Unable to parse answer. Aborting.\n");
