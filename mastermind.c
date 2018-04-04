@@ -191,16 +191,6 @@ Solver_support create_solver_support(size_t size)
   return solverSup;
 }
 
-void set_current_combi_solver_support(Solver_support* const solverSup, const Combination combination)
-{
-  solverSup->currentCombi = combination;
-}
-
-void set_temp_combi_solver_support(Solver_support* const solverSup, const Combination combination)
-{
-  solverSup->tempCombi = combination;
-}
-
 // --------------------------------------------------
 int ask(const Combination combination, Answer* const answer)
 {
