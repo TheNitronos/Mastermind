@@ -174,10 +174,32 @@ typedef struct {
 // ==== Solvers =========================================================
 
 typedef struct {
-  Combination combiOne;
-  Combination combiTwo;
-  BitSet bits;
+  Combination currentCombi;
+  Combination tempCombi;
+  BitSet bitS;
 } Solver_support;
+
+// --------------------------------------------------
+Solver_support create_solver_support(size_t size)
+{
+  Solver_support solverSup;
+
+  solverSup.currentCombi = create_combination(size);
+  solverSup.tempCombi = create_combination(size);
+  solverSup.bitS = create_bitset(pow(6, size));
+
+  return solverSup;
+}
+
+void set_current_combi_solver_support(Solver_support* const solverSup, const Combination combination)
+{
+  solverSup->currentCombi = combination;
+}
+
+void set_temp_combi_solver_support(Solver_support* const solverSup, const Combination combination)
+{
+  solverSup->tempCombi = combination;
+}
 
 // --------------------------------------------------
 int ask(const Combination combination, Answer* const answer)
