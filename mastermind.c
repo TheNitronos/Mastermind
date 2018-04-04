@@ -31,6 +31,13 @@ BitSet create_bitset(size_t size)
     return result;
 }
 
+// --------------------------------------------------
+void delete_bitset(BitSet* bitS)
+{
+  free(bitS->bytes);
+  bitS->size = 0;
+}
+
 /** --------------------------------------------------
  * @brief gets the bit value at bit position `index`
  * @param bitset the BitSet structure to read from
@@ -58,9 +65,7 @@ void bitset_set(BitSet* bitset, size_t index, int bit)
     *prev = bit ? (*prev | shifted) : (*prev & (-1 ^ shifted));
 }
 
-
 // ==== Combination =====================================================
-
 typedef struct {
   size_t size;
   color* elements;
@@ -79,6 +84,12 @@ Combination create_combination(size_t size)
   }
 
   return newCombi;
+}
+
+// --------------------------------------------------
+void delete_combination(Combination* combination) {
+  free(combination->elements);
+  combination->size = 0;
 }
 
 // --------------------------------------------------
@@ -165,14 +176,12 @@ void print_combination(const Combination combination)
 }
 
 // ==== Answer ==========================================================
-
 typedef struct {
   unsigned int positions;
   unsigned int colors;
 } Answer;
 
 // ==== Solvers =========================================================
-
 typedef struct {
   Combination currentCombi;
   Combination tempCombi;
@@ -189,6 +198,14 @@ Solver_support create_solver_support(size_t size)
   solverSup.bitS = create_bitset(pow(6, size));
 
   return solverSup;
+}
+
+// --------------------------------------------------
+void delete_solver_support(Solver_support* solverSup)
+{
+  delete_combination(&(solverSup->currentCombi));
+  delete_combination(&(solverSup->tempCombi));
+  delete_bitset(&(solverSup->bitS));
 }
 
 // --------------------------------------------------
@@ -279,7 +296,6 @@ int review_combinations(Solver_support* s, size_t* count)
   assert(s != NULL); // review_combination() is a tool function so this should never happen
   Answer answerPlayer;
   Answer answerAttempt;
-  int tempModified = 0;
 
   if (ask(s->currentCombi, &answerPlayer)) {
     return 0;
@@ -297,12 +313,6 @@ int review_combinations(Solver_support* s, size_t* count)
       }
     }
 
-    do {
-      if (next_combination(&(s->currentCombi))) {
-        return 0;
-      }
-    } while (bitset_get(s->bitS, combination_to_index(s->currentCombi)));
-
     return 1;
   }
 }
@@ -312,13 +322,19 @@ void solve_with_bitset(size_t size)
 {
   Solver_support solverSup = create_solver_support(size);
 
-  while(review_combinations(&solverSup, NULL));
+  while (review_combinations(&solverSup, NULL) && !next_combination(&(solverSup.currentCombi))) {
+    while (bitset_get(solverSup.bitS, combination_to_index(solverSup.currentCombi))) {
+      next_combination(&(solverSup.currentCombi));
+    }
+  }
 }
-
 
 // --------------------------------------------------
 void solve_knuth(size_t size)
 {
+  Solver_support solverSup = create_solver_support(size);
+
+  while(review_combinations(&solverSup, NULL));
 }
 
 // ==== main() ==========================================================
