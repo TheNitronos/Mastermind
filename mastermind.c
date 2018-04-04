@@ -281,8 +281,6 @@ int review_combinations(Solver_support* s, size_t* count)
   Answer answerAttempt;
   int tempModified = 0;
 
-  Combination lala = create_combination(2);
-
   if (ask(s->currentCombi, &answerPlayer)) {
     return 0;
   } else {
@@ -295,14 +293,14 @@ int review_combinations(Solver_support* s, size_t* count)
         if (answerAttempt.positions != answerPlayer.positions ||
             answerPlayer.colors != answerAttempt.colors) {
               bitset_set(&(s->bitS), i, 1);
-              printf("\t");
-              print_combination(*combination_from_index(i, &lala));
         }
       }
     }
 
     do {
-      next_combination(&(s->currentCombi));
+      if (next_combination(&(s->currentCombi))) {
+        return 0;
+      }
     } while (bitset_get(s->bitS, combination_to_index(s->currentCombi)));
 
     return 1;
@@ -312,7 +310,6 @@ int review_combinations(Solver_support* s, size_t* count)
 // --------------------------------------------------
 void solve_with_bitset(size_t size)
 {
-  Combination combination = create_combination(size);
   Solver_support solverSup = create_solver_support(size);
 
   while(review_combinations(&solverSup, NULL));
