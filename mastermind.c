@@ -291,26 +291,29 @@ int review_combinations(Solver_support* s, size_t* count)
   Answer answerAttempt;
   int tempModified = 0;
 
+  Combination lala = create_combination(2);
+
   if (ask(s->currentCombi, &answerPlayer)) {
     return 0;
   } else {
-    bitset_set(s->bitS, combination_to_index(s->currentCombi), 1);
+    bitset_set(&(s->bitS), combination_to_index(s->currentCombi), 1);
 
-    for (size_t i = 0; i < (Solver_support->bitS.size); ++i) {
+    for (size_t i = 0; i < (s->bitS.size); ++i) {
       if (!bitset_get(s->bitS, i)) {
-        score_attempt(s->currentCombi, combination_from_index(i), &answerAttempt);
+        score_attempt(&(s->currentCombi), combination_from_index(i, &(s->tempCombi)), &answerAttempt);
 
-        if (answerAttempt.positions < answerPlayer.positions ||
-            answerAttempt.colors < answerPlayer.colors) {
-              bitset_set(s->bitS, i, 1);
-        } else if (!tempModified) {
-          s->tempCombi = combination_from_index(i);
-          tempModified = 1;
+        if (answerAttempt.positions != answerPlayer.positions ||
+            answerPlayer.colors != answerAttempt.colors) {
+              bitset_set(&(s->bitS), i, 1);
+              printf("\t");
+              print_combination(*combination_from_index(i, &lala));
         }
       }
     }
 
-    s->currentCombi = s->tempCombi;
+    do {
+      next_combination(&(s->currentCombi));
+    } while (bitset_get(s->bitS, combination_to_index(s->currentCombi)));
 
     return 1;
   }
@@ -321,6 +324,8 @@ void solve_with_bitset(size_t size)
 {
   Combination combination = create_combination(size);
   Solver_support solverSup = create_solver_support(size);
+
+  while(review_combinations(&solverSup, NULL));
 }
 
 
