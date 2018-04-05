@@ -309,6 +309,9 @@ int review_combinations(Solver_support* s, size_t* count)
         if (answerAttempt.positions != answerPlayer.positions ||
             answerPlayer.colors != answerAttempt.colors) {
               bitset_set(&(s->bitS), i, 1);
+              if (count != NULL) {
+                --*count;
+              }
         }
       }
     }
