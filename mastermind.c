@@ -224,7 +224,7 @@ int ask(const Combination combination, Answer* const answer)
   answer->positions = rPositions;
   answer->colors = rColors;
 
-  if ((rLength != 2) || (rPositions < 0) || (rColors < 0)) {
+  if ((rLength != 2) || (rPositions < 0) || (rColors < 0) || getc(stdin) != '\n') {
     printf("Unable to parse answer. Aborting.\n");
     fflush(stdout);
 
