@@ -67,6 +67,16 @@ void bitset_set(BitSet* bitset, size_t index, int bit)
     *prev = bit ? (*prev | shifted) : (*prev & (-1 ^ shifted));
 }
 
+int bitset_available(const BitSet bitset) {
+  for (size_t i = 0; i < bitset.size; ++i) {
+    if (!bitset_get(bitset, i)) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
 // ==== Combination =====================================================
 typedef struct {
   size_t size;
