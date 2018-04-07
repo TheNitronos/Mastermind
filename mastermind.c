@@ -288,6 +288,8 @@ void solve_brute_force(size_t size)
   Answer answer;
 
   while ((!ask(combination, &answer)) && (!next_combination(&combination)));
+
+  delete_combination(&combination);
 }
 
 // --------------------------------------------------
@@ -330,6 +332,8 @@ void solve_with_bitset(size_t size)
       next_combination(&(solverSup.currentCombi));
     }
   }
+
+  delete_solver_support(&solverSup);
 }
 
 // --------------------------------------------------
