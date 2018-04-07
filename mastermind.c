@@ -340,8 +340,23 @@ void solve_with_bitset(size_t size)
 void solve_knuth(size_t size)
 {
   Solver_support solverSup = create_solver_support(size);
+  size_t count = pow(6, size);
 
-  while(review_combinations(&solverSup, NULL));
+  switch (size) {
+    case 2:
+      combination_from_index(6, &(solverSup.currentCombi));
+      break;
+    case 3:
+      combination_from_index(36, &(solverSup.currentCombi));
+      break;
+    case 4:
+      combination_from_index(252, &(solverSup.currentCombi));
+      break;
+    case 5:
+      combination_from_index(1512, &(solverSup.currentCombi));
+      break;
+  }
+
 }
 
 // ==== main() ==========================================================
