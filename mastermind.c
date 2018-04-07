@@ -34,8 +34,10 @@ BitSet create_bitset(size_t size)
 // --------------------------------------------------
 void delete_bitset(BitSet* bitS)
 {
-  free(bitS->bytes);
-  bitS->size = 0;
+  if (bitS != NULL) {
+    free(bitS->bytes);
+    bitS->size = 0;
+  }
 }
 
 /** --------------------------------------------------
@@ -88,14 +90,17 @@ Combination create_combination(size_t size)
 
 // --------------------------------------------------
 void delete_combination(Combination* combination) {
-  free(combination->elements);
-  combination->size = 0;
+  if (combination != NULL) {
+    free(combination->elements);
+    combination->size = 0;
+  }
 }
 
 // --------------------------------------------------
 int next_combination(Combination combination)
 {
   unsigned int overflow = 1;
+
   for (size_t i=0; i < combination.size; ++i) {
     combination.elements[i] = (combination.elements[i]+overflow)%colorEnumSize;
 
@@ -124,6 +129,10 @@ size_t combination_to_index(const Combination combination)
 // --------------------------------------------------
 Combination* combination_from_index(size_t index, Combination* combination)
 {
+  if (combination == NULL) {
+    return NULL;
+  }
+
   *combination = create_combination(combination->size);
   int j;
 
@@ -203,14 +212,23 @@ Solver_support create_solver_support(size_t size)
 // --------------------------------------------------
 void delete_solver_support(Solver_support* solverSup)
 {
-  delete_combination(&(solverSup->currentCombi));
-  delete_combination(&(solverSup->tempCombi));
-  delete_bitset(&(solverSup->bitS));
+  if (solverSup != NULL) {
+    delete_combination(&(solverSup->currentCombi));
+    delete_combination(&(solverSup->tempCombi));
+    delete_bitset(&(solverSup->bitS));
+  }
 }
 
 // --------------------------------------------------
 int ask(const Combination combination, Answer* const answer)
 {
+  if (answer == NULL) {
+    printf("Answer* = NULL. Aborting.\n");
+    fflush(stdout);
+
+    return 1;
+  }
+
   int rPositions = -1;
   int rColors = -1;
   int rLength = -1;
@@ -357,6 +375,7 @@ void solve_knuth(size_t size)
       break;
   }
 
+  print_combination(solverSup.currentCombi);
 }
 
 // ==== main() ==========================================================
