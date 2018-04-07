@@ -373,6 +373,7 @@ void solve_with_bitset(size_t size)
 void solve_knuth(size_t size)
 {
   Solver_support solverSup = create_solver_support(size);
+  const size_t countCST = pow(6, size);
   size_t count = pow(6, size);
 
   switch (size) {
@@ -390,7 +391,56 @@ void solve_knuth(size_t size)
       break;
   }
 
-  print_combination(solverSup.currentCombi);
+  while (review_combinations(&solverSup, &count)) {
+    Combination cI = create_combination(size);
+    Combination c = create_combination(size);
+    Answer ans;
+    ans.positions = 0;
+    ans.colors = 0;
+
+    int max;
+    int tab[size+1][size+1];
+    int maxTab[countCST];
+    for (size_t iCI = 0; iCI < countCST; ++iCI) {
+      combination_from_index(iCI, &cI);
+      max = 0;
+      for (size_t i = 0; i < size+1; ++i) {
+        for (size_t j = 0; j < size+1; ++j) {
+          tab[i][j] = 0;
+        }
+      }
+
+      for (size_t jC = 0; jC < countCST; ++jC) {
+        if (!bitset_get(solverSup.bitS, jC)) {
+          combination_from_index(jC, &c);
+          score_attempt(&cI, &c, &ans);
+          ++tab[ans.positions][ans.colors];
+        }
+      }
+
+      for (size_t i = 0; i < size+1; ++i) {
+        for (size_t j = 0; j < size+1; ++j) {
+          if (tab[i][j] > max) {
+            max = tab[i][j];
+          }
+        }
+      }
+
+      maxTab[iCI] = max;
+    }
+
+    int minCardinality = countCST;
+    size_t minCardinalityIndex = 0;
+    for (size_t i = 0; i < countCST; ++i) {
+      if ((maxTab[i] <= minCardinality  && !bitset_get(solverSup.bitS, i) && bitset_get(solverSup.bitS, minCardinalityIndex)) || maxTab[i] < minCardinality) {
+        minCardinality = maxTab[i];
+        minCardinalityIndex = i;
+      }
+    }
+
+    combination_from_index(minCardinalityIndex, &solverSup.currentCombi);
+    printf("%d\n", bitset_get(solverSup.bitS, minCardinalityIndex));
+  }
 }
 
 // ==== main() ==========================================================
