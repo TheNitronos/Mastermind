@@ -358,7 +358,9 @@ void solve_with_bitset(size_t size)
 {
   Solver_support solverSup = create_solver_support(size);
 
-  while (review_combinations(&solverSup, NULL) && !next_combination(solverSup.currentCombi)) {
+  while (review_combinations(&solverSup, NULL) &&
+          !next_combination(solverSup.currentCombi) &&
+          bitset_available(solverSup.bitS)) {
     while (bitset_get(solverSup.bitS, combination_to_index(solverSup.currentCombi))) {
       next_combination(solverSup.currentCombi);
     }
