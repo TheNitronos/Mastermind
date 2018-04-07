@@ -321,6 +321,9 @@ int review_combinations(Solver_support* s, size_t* count)
     return 0;
   } else {
     bitset_set(&(s->bitS), combination_to_index(s->currentCombi), 1);
+    if (count != NULL) {
+      --*count;
+    }
 
     for (size_t i = 0; i < (s->bitS.size); ++i) {
       if (!bitset_get(s->bitS, i)) {
