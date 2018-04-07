@@ -93,13 +93,13 @@ void delete_combination(Combination* combination) {
 }
 
 // --------------------------------------------------
-int next_combination(Combination* const combination)
+int next_combination(Combination combination)
 {
   unsigned int overflow = 1;
-  for (size_t i=0; i < combination->size; ++i) {
-    combination->elements[i] = (combination->elements[i]+overflow)%colorEnumSize;
+  for (size_t i=0; i < combination.size; ++i) {
+    combination.elements[i] = (combination.elements[i]+overflow)%colorEnumSize;
 
-    if (overflow && (combination->elements[i] == YELLOW)) {
+    if (overflow && (combination.elements[i] == YELLOW)) {
       overflow = 1;
     } else {
       overflow = 0;
@@ -287,7 +287,7 @@ void solve_brute_force(size_t size)
   Combination combination = create_combination(size);
   Answer answer;
 
-  while ((!ask(combination, &answer)) && (!next_combination(&combination)));
+  while ((!ask(combination, &answer)) && (!next_combination(combination)));
 
   delete_combination(&combination);
 }
@@ -327,9 +327,9 @@ void solve_with_bitset(size_t size)
 {
   Solver_support solverSup = create_solver_support(size);
 
-  while (review_combinations(&solverSup, NULL) && !next_combination(&(solverSup.currentCombi))) {
+  while (review_combinations(&solverSup, NULL) && !next_combination(solverSup.currentCombi)) {
     while (bitset_get(solverSup.bitS, combination_to_index(solverSup.currentCombi))) {
-      next_combination(&(solverSup.currentCombi));
+      next_combination(solverSup.currentCombi);
     }
   }
 
