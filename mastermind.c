@@ -146,9 +146,11 @@ Combination* combination_from_index(size_t index, Combination* combination)
     return NULL;
   }
 
-  *combination = create_combination(combination->size);
-  int j;
+  for (size_t i = 0; i < combination->size; ++i) {
+    combination->elements[i] = 0;
+  }
 
+  int j;
   for (int i = (combination->size - 1); i >= 0; --i) {
     j = 5;
 
@@ -402,9 +404,6 @@ void solve_knuth(size_t size)
       break;
   }
 
-  printf("lalala\n");
-  fflush(stdout);
-
   /*
   while the combination has not been foud and there are still possible
   combinations in the Solver_support
@@ -492,7 +491,6 @@ void solve_knuth(size_t size)
 }
 
 // ==== main() ==========================================================
-
 int main(void)
 {
     size_t size = 0;
