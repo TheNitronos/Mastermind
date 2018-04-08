@@ -4,6 +4,12 @@
 #include <math.h> // pow()
 #include <assert.h>
 
+/*
+  I wrote/ran this code on windows and changed line 503 (scanf(...))
+  It compiles without any problem...
+  Knuth algo seems to work but for size 5, it may take some time...
+*/
+
 // ==== Color ===========================================================
 enum color {YELLOW, BLUE, GREEN, RED, PINK, ORANGE};
 typedef enum color color;
@@ -497,6 +503,7 @@ int main(void)
     do {
         printf("What size (2, 3, 4, 5)? ");
         fflush(stdout);
+        // scanf("%zu", &size);
         scanf("%Iu", &size);
     } while ((size != 2) && (size != 3) && (size != 4) && (size != 5));
 
