@@ -391,7 +391,7 @@ void solve_knuth(size_t size)
       break;
   }
 
-  while (review_combinations(&solverSup, &count)) {
+  while (review_combinations(&solverSup, &count) && bitset_available(solverSup.bitS)) {
     Combination cI = create_combination(size);
     Combination c = create_combination(size);
     Answer ans;
@@ -439,7 +439,6 @@ void solve_knuth(size_t size)
     }
 
     combination_from_index(minCardinalityIndex, &solverSup.currentCombi);
-    printf("%d\n", bitset_get(solverSup.bitS, minCardinalityIndex));
   }
 }
 
