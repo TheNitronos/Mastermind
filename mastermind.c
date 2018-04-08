@@ -427,20 +427,20 @@ void solve_knuth(size_t size)
     int tempMax;
     //2d array for finding all max
     int tempArray[SIZE_PLUS_ONE][SIZE_PLUS_ONE];
+    for (size_t i = 0; i < SIZE_PLUS_ONE; ++i) {
+      for (size_t j = 0; j < SIZE_PLUS_ONE; ++j) {
+        tempArray[i][j] = 0;
+      }
+    }
     //array of the max of each 2d arrary max
     int maxArray[TOTAL_SIZE];
 
     //iterate over all combinations
     for (size_t iterCombiIndex = 0; iterCombiIndex < TOTAL_SIZE; ++iterCombiIndex) {
-      combination_from_index(iterCombiIndex, &iterCombi);
 
       //initial values
+      combination_from_index(iterCombiIndex, &iterCombi);
       tempMax = 0;
-      for (size_t i = 0; i < SIZE_PLUS_ONE; ++i) {
-        for (size_t j = 0; j < SIZE_PLUS_ONE; ++j) {
-          tempArray[i][j] = 0;
-        }
-      }
 
       //iterate over all possible combinations
       for (size_t possibleCombiIndex = 0; possibleCombiIndex < TOTAL_SIZE; ++possibleCombiIndex) {
@@ -453,12 +453,13 @@ void solve_knuth(size_t size)
         }
       }
 
-      //find the max in the 2d array
+      //find the max in the 2d array and reset its values to 0
       for (size_t i = 0; i < SIZE_PLUS_ONE; ++i) {
         for (size_t j = 0; j < SIZE_PLUS_ONE; ++j) {
           if (tempArray[i][j] > tempMax) {
             tempMax = tempArray[i][j];
           }
+          tempArray[i][j] = 0;
         }
       }
 
@@ -476,10 +477,10 @@ void solve_knuth(size_t size)
       combination, which is still possible
       or the the maxArray[i] is smaller than minCardinality
       */
-      if ((maxArray[i] == minCardinality &&
+      if (maxArray[i] < minCardinality ||
+          (maxArray[i] == minCardinality &&
            !bitset_get(solverSup.bitS, i) &&
-           bitset_get(solverSup.bitS, minCardinalityIndex)) ||
-          maxArray[i] < minCardinality) {
+           bitset_get(solverSup.bitS, minCardinalityIndex))) {
 
         minCardinality = maxArray[i];
         minCardinalityIndex = i;
