@@ -67,6 +67,7 @@ void bitset_set(BitSet* bitset, size_t index, int bit)
     *prev = bit ? (*prev | shifted) : (*prev & (-1 ^ shifted));
 }
 
+//return 1 if there is still a 0 value in the bitset, 0 otherwise
 int bitset_available(const BitSet bitset) {
   for (size_t i = 0; i < bitset.size; ++i) {
     if (!bitset_get(bitset, i)) {
@@ -101,7 +102,9 @@ Combination create_combination(size_t size)
 // --------------------------------------------------
 void delete_combination(Combination* combination) {
   if (combination != NULL) {
-    free(combination->elements);
+    if (combination->elements != NULL) {
+      free(combination->elements);
+    }
     combination->size = 0;
   }
 }
@@ -109,7 +112,7 @@ void delete_combination(Combination* combination) {
 // --------------------------------------------------
 int next_combination(Combination combination)
 {
-  unsigned int overflow = 1;
+  int overflow = 1;
 
   for (size_t i=0; i < combination.size; ++i) {
     combination.elements[i] = (combination.elements[i]+overflow)%colorEnumSize;
@@ -144,9 +147,9 @@ Combination* combination_from_index(size_t index, Combination* combination)
   }
 
   *combination = create_combination(combination->size);
-  int j;
+  size_t j;
 
-  for (int i = (combination->size - 1); i >= 0; --i) {
+  for (size_t i = (combination->size - 1); i >= 0; --i) {
     j = 5;
 
     while ((j >= 0) && (index >= pow(6, i))) {
@@ -233,7 +236,7 @@ void delete_solver_support(Solver_support* solverSup)
 int ask(const Combination combination, Answer* const answer)
 {
   if (answer == NULL) {
-    printf("Answer* = NULL. Aborting.\n");
+    printf("Answer* == NULL. Aborting.\n");
     fflush(stdout);
 
     return 1;
@@ -244,7 +247,6 @@ int ask(const Combination combination, Answer* const answer)
   int rLength = -1;
 
   print_combination(combination);
-
   printf("Please score attempt (positions, colors): ");
   fflush(stdout);
 
@@ -315,6 +317,7 @@ void solve_brute_force(size_t size)
   Combination combination = create_combination(size);
   Answer answer;
 
+  //while we can play and there is still a next combination... play
   while ((!ask(combination, &answer)) && (!next_combination(combination)));
 
   delete_combination(&combination);
@@ -330,11 +333,13 @@ int review_combinations(Solver_support* s, size_t* count)
   if (ask(s->currentCombi, &answerPlayer)) {
     return 0;
   } else {
+    //set the corresponding bit in BitSet to 1
     bitset_set(&(s->bitS), combination_to_index(s->currentCombi), 1);
     if (count != NULL) {
       --*count;
     }
 
+    //go through all combinations and set to 1, which are not still possible
     for (size_t i = 0; i < (s->bitS.size); ++i) {
       if (!bitset_get(s->bitS, i)) {
         score_attempt(&(s->currentCombi), combination_from_index(i, &(s->tempCombi)), &answerAttempt);
@@ -359,8 +364,9 @@ void solve_with_bitset(size_t size)
   Solver_support solverSup = create_solver_support(size);
 
   while (review_combinations(&solverSup, NULL) &&
-          !next_combination(solverSup.currentCombi) &&
-          bitset_available(solverSup.bitS)) {
+         !next_combination(solverSup.currentCombi) &&
+         bitset_available(solverSup.bitS)) {
+    //find the next combination, which is possible according to the BitSet
     while (bitset_get(solverSup.bitS, combination_to_index(solverSup.currentCombi))) {
       next_combination(solverSup.currentCombi);
     }
@@ -373,9 +379,14 @@ void solve_with_bitset(size_t size)
 void solve_knuth(size_t size)
 {
   Solver_support solverSup = create_solver_support(size);
-  const size_t countCST = pow(6, size);
-  size_t count = pow(6, size);
+  const size_t TOTAL_SIZE = pow(6, size);
+  const size_t SIZE_PLUS_ONE = size+1;
 
+  Combination iterCombi = create_combination(size);
+  Combination possibleCombi = create_combination(size);
+  Answer answer;
+
+  //chose the first combination : YB, YYB, YYBB or YYYBB
   switch (size) {
     case 2:
       combination_from_index(6, &(solverSup.currentCombi));
@@ -391,55 +402,90 @@ void solve_knuth(size_t size)
       break;
   }
 
-  while (review_combinations(&solverSup, &count) && bitset_available(solverSup.bitS)) {
-    Combination cI = create_combination(size);
-    Combination c = create_combination(size);
-    Answer ans;
-    ans.positions = 0;
-    ans.colors = 0;
+  /*
+  while the combination has not been foud and there are still possible
+  combinations in the Solver_support
+  */
+  while (review_combinations(&solverSup, NULL) &&
+         bitset_available(solverSup.bitS)) {
 
-    int max;
-    int tab[size+1][size+1];
-    int maxTab[countCST];
-    for (size_t iCI = 0; iCI < countCST; ++iCI) {
-      combination_from_index(iCI, &cI);
-      max = 0;
-      for (size_t i = 0; i < size+1; ++i) {
-        for (size_t j = 0; j < size+1; ++j) {
-          tab[i][j] = 0;
+    //initial values
+    combination_from_index(0, &iterCombi);
+    combination_from_index(0, &possibleCombi);
+    answer.positions = 0;
+    answer.colors = 0;
+
+    //max of each 2d array
+    int tempMax;
+    //2d array for finding all max
+    int tempArray[SIZE_PLUS_ONE][SIZE_PLUS_ONE];
+    //array of the max of each 2d arrary max
+    int maxArray[TOTAL_SIZE];
+
+    //iterate over all combinations
+    for (size_t iterCombiIndex = 0; iterCombiIndex < TOTAL_SIZE; ++iterCombiIndex) {
+      combination_from_index(iterCombiIndex, &iterCombi);
+
+      //initial values
+      tempMax = 0;
+      for (size_t i = 0; i < SIZE_PLUS_ONE; ++i) {
+        for (size_t j = 0; j < SIZE_PLUS_ONE; ++j) {
+          tempArray[i][j] = 0;
         }
       }
 
-      for (size_t jC = 0; jC < countCST; ++jC) {
-        if (!bitset_get(solverSup.bitS, jC)) {
-          combination_from_index(jC, &c);
-          score_attempt(&cI, &c, &ans);
-          ++tab[ans.positions][ans.colors];
+      //iterate over all possible combinations
+      for (size_t possibleCombiIndex = 0; possibleCombiIndex < TOTAL_SIZE; ++possibleCombiIndex) {
+        //if it is a possible combination
+        if (!bitset_get(solverSup.bitS, possibleCombiIndex)) {
+          //increment the corresponding location (score) in the 2d array
+          combination_from_index(possibleCombiIndex, &possibleCombi);
+          score_attempt(&iterCombi, &possibleCombi, &answer);
+          ++tempArray[answer.positions][answer.colors];
         }
       }
 
-      for (size_t i = 0; i < size+1; ++i) {
-        for (size_t j = 0; j < size+1; ++j) {
-          if (tab[i][j] > max) {
-            max = tab[i][j];
+      //find the max in the 2d array
+      for (size_t i = 0; i < SIZE_PLUS_ONE; ++i) {
+        for (size_t j = 0; j < SIZE_PLUS_ONE; ++j) {
+          if (tempArray[i][j] > tempMax) {
+            tempMax = tempArray[i][j];
           }
         }
       }
 
-      maxTab[iCI] = max;
+      //save the the temporary max in the maxArray
+      maxArray[iterCombiIndex] = tempMax;
     }
 
-    int minCardinality = countCST;
+    int minCardinality = TOTAL_SIZE;
     size_t minCardinalityIndex = 0;
-    for (size_t i = 0; i < countCST; ++i) {
-      if ((maxTab[i] <= minCardinality  && !bitset_get(solverSup.bitS, i) && bitset_get(solverSup.bitS, minCardinalityIndex)) || maxTab[i] < minCardinality) {
-        minCardinality = maxTab[i];
+
+    //find the ideal combination
+    for (size_t i = 0; i < TOTAL_SIZE; ++i) {
+      /*
+      either maxArray[i] is equal to minCardinality and need to select the first
+      combination, which is still possible
+      or the the maxArray[i] is smaller than minCardinality
+      */
+      if ((maxArray[i] == minCardinality &&
+           !bitset_get(solverSup.bitS, i) &&
+           bitset_get(solverSup.bitS, minCardinalityIndex)) ||
+          maxArray[i] < minCardinality) {
+
+        minCardinality = maxArray[i];
         minCardinalityIndex = i;
       }
     }
 
+    //set the new combination to be the next, which will be asked
     combination_from_index(minCardinalityIndex, &solverSup.currentCombi);
   }
+
+  //free the memory
+  delete_solver_support(&solverSup);
+  delete_combination(&iterCombi);
+  delete_combination(&possibleCombi);
 }
 
 // ==== main() ==========================================================
