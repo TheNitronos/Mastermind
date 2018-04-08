@@ -147,9 +147,9 @@ Combination* combination_from_index(size_t index, Combination* combination)
   }
 
   *combination = create_combination(combination->size);
-  size_t j;
+  int j;
 
-  for (size_t i = (combination->size - 1); i >= 0; --i) {
+  for (int i = (combination->size - 1); i >= 0; --i) {
     j = 5;
 
     while ((j >= 0) && (index >= pow(6, i))) {
@@ -401,6 +401,9 @@ void solve_knuth(size_t size)
       combination_from_index(1512, &(solverSup.currentCombi));
       break;
   }
+
+  printf("lalala\n");
+  fflush(stdout);
 
   /*
   while the combination has not been foud and there are still possible
