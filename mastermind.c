@@ -325,7 +325,7 @@ void solve_brute_force(size_t size)
   Answer answer;
 
   //while we can play and there is still a next combination... play
-  while ((!ask(combination, &answer)) && (!next_combination(combination)));
+  while ((!ask(combination, &answer)) && (!next_combination(&combination)));
 
   delete_combination(&combination);
 }
@@ -371,11 +371,11 @@ void solve_with_bitset(size_t size)
   Solver_support solverSup = create_solver_support(size);
 
   while (review_combinations(&solverSup, NULL) &&
-         !next_combination(solverSup.currentCombi) &&
+         !next_combination(&(solverSup.currentCombi)) &&
          bitset_available(solverSup.bitS)) {
     //find the next combination, which is possible according to the BitSet
     while (bitset_get(solverSup.bitS, combination_to_index(solverSup.currentCombi))) {
-      next_combination(solverSup.currentCombi);
+      next_combination(&(solverSup.currentCombi));
     }
   }
 
