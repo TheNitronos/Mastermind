@@ -115,14 +115,14 @@ void delete_combination(Combination* combination) {
 }
 
 // --------------------------------------------------
-int next_combination(Combination combination)
+int next_combination(Combination* combination)
 {
   int overflow = 1;
 
-  for (size_t i=0; i < combination.size; ++i) {
-    combination.elements[i] = (combination.elements[i]+overflow)%colorEnumSize;
+  for (size_t i=0; i < combination->size; ++i) {
+    combination->elements[i] = (combination->elements[i]+overflow)%colorEnumSize;
 
-    if (overflow && (combination.elements[i] == YELLOW)) {
+    if (overflow && (combination->elements[i] == YELLOW)) {
       overflow = 1;
     } else {
       overflow = 0;
